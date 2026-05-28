@@ -1,16 +1,17 @@
 :root {
-    --bg-lightest: #f8fafc;
-    --bg-panel: #ffffff;
-    --bg-card: #f1f5f9;
-    --border-line: #cbd5e1;
-    --text-dark: #0f172a;
-    --text-muted: #64748b;
+    --bg-darkest: #f8fafc;   /* 整个网页的大背景：从深黑变成干净的医用浅灰蓝 */
+    --bg-panel: #ffffff;     /* 控制面板和卡片背景：纯白 */
+    --bg-card: #f1f5f9;      /* 示波器外框：浅灰色，突出核心 */
+    --border-glow: #cbd5e1;  /* 边框线条：清爽的灰色 */
+    --text-bright: #0f172a;  /* 主要文字颜色：加深为接近纯黑，确保读字清晰 */
+    --text-dim: #64748b;     /* 次要文字颜色：深灰色 */
     
-    /* 纸质医学示波器高对比度配色 */
-    --deep-red: #dc2626;
-    --deep-green: #15803d;
-    --deep-blue: #1d4ed8;
-    --grid-pink: #ffe4e4;
+    /* 核心图形配色：采用高清晰度、医生最习惯的深色调 */
+    --neon-red: #b91c1c;     /* 通道1（输入信号）：深红色（线宽加粗后极度醒目） */
+    --neon-green: #166534;   /* 通道2（消噪输出）：深绿色 */
+    --neon-blue: #1d4ed8;    /* 心脏电偶极子大箭头：深蓝色（在纯白背景下绝不会看不清） */
+    --grid-pink: #ffcccc;    /* 标准心电图纸大网格：浅粉色 */
+    --grid-pink-fine: #fff0f0; /* 标准心电图纸细网格：极淡粉色 */
 }
 
 body {
@@ -118,8 +119,12 @@ input[type="range"] { flex: 1; accent-color: var(--deep-blue); cursor: pointer; 
 .visual-card h2 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
 .dipole-workspace { display: flex; gap: 20px; align-items: center; background: var(--bg-card); padding: 10px; border-radius: 8px; }
-#canvasDipole { background: #ffffff; border-radius: 6px; border: 1px solid var(--border-line); }
-
+/* 心脏矢量空间背景修改 */
+#canvasDipole { 
+    background: #ffffff !important; /* 强制背景变为纯白 */
+    border-radius: 6px; 
+    border: 1px solid var(--border-line); 
+}
 .physics-live-data { flex: 1; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
 .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-line); padding-bottom: 5px; }
 .status-box { background: #ffffff; border-left: 3px solid var(--deep-blue); padding: 10px; font-size: 12px; color: var(--text-muted); border-radius: 4px; line-height: 1.5; border-top: 1px solid var(--border-line); border-right: 1px solid var(--border-line); border-bottom: 1px solid var(--border-line); }
@@ -131,4 +136,11 @@ input[type="range"] { flex: 1; accent-color: var(--deep-blue); cursor: pointer; 
 .color-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .dot-red { background: var(--deep-red); box-shadow: 0 0 4px rgba(220,38,38,0.3); }
 
-canvas { background: #ffffff; display: block; border-radius: 4px; border: 1px solid var(--border-line); width: 100%; }
+/* 两个波形示波器的画布样式 */
+canvas { 
+    background: #ffffff !important; /* 强制波形图背景由黑变纯白 */
+    display: block; 
+    border-radius: 4px; 
+    border: 1px solid #cbd5e1; 
+    width: 100%; 
+}
