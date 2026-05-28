@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioelectromagnetism: ECG Interactive Presentation Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>How Electromagnetic Fields Reveal the Electrical Activity of the Human Heart</h1>
+        <p class="subtitle">AP Physics & Biomedical Engineering Interactive Courseware</p>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>PPT Navigation & Controls</h2>
+            
+            <div class="nav-tabs">
+                <button class="nav-btn active" onclick="switchTab('tab-micro')">Pages 3-5: Microscopic Source</button>
+                <button class="nav-btn" onclick="switchTab('tab-circuit')">Pages 10-11: Engineering Capture</button>
+                <button class="nav-btn" onclick="switchTab('tab-clinical')">Pages 12-16: Clinical Application</button>
+            </div>
+
+            <div id="tab-micro" class="tab-content active">
+                <h3>Microscopic Membrane Potential</h3>
+                <p class="info-text">Simulating ionic flux ($\text{Na}^+, \text{Ca}^{2+}, \text{K}^+$) generating transmembrane potential differentials.</p>
+                <div class="control-group">
+                    <button class="action-btn" onclick="triggerDepolarization()">Trigger Action Potential (Depolarization)</button>
+                </div>
+                <div class="physics-box">
+                    <strong>Physics Core:</strong>
+                    The heart functions macroscopically as a rotating electric dipole vector $\vec{p} = q \cdot \vec{d}$ projecting dynamic potential fields onto the volume conductor of human tissue.
+                </div>
+            </div>
+
+            <div id="tab-circuit" class="tab-content">
+                <h3>Hardware Differential Subtraction</h3>
+                <p class="info-text">Combating ambient 50Hz AC powerline noise using an operational amplifier configuration.</p>
+                <div class="control-group">
+                    <label>Ambient Noise Amplitude ($V_{cm}$): <span id="noiseVal">25</span> mV</label>
+                    <input type="range" id="noiseSlider" min="0" max="60" value="25">
+                </div>
+                <div class="control-group">
+                    <label>Op-Amp Feedback Gain ($R_2/R_1$): <span id="gainVal">1.2</span>x</label>
+                    <input type="range" id="gainSlider" min="0.5" max="2.5" step="0.1" value="1.2">
+                </div>
+                <button id="toggleOpAmp" class="circuit-toggle btn-red" onclick="toggleFilter()">Turn On Differential Op-Amp</button>
+                <div class="physics-box">
+                    <strong>Mathematical Model:</strong>
+                    $$V_{out} = \frac{R_2}{R_1}(V_2 - V_1)$$
+                    When common-mode noise is mathematically identical on both inputs, subtraction forces it to $0\text{V}$.
+                </div>
+            </div>
+
+            <div id="tab-clinical" class="tab-content">
+                <h3>Clinical Electrocardiology</h3>
+                <p class="info-text">Select a clinical pathology to modify the electro-anatomical boundary conditions and observe geometric deformations.</p>
+                <div class="pathology-selector">
+                    <button class="path-btn active" onclick="setPathology('normal')">Normal Rhythm (60-100 bpm)</button>
+                    <button class="path-btn" onclick="setPathology('tachycardia')">Tachycardia (Short R-R Spacing)</button>
+                    <button class="path-btn" onclick="setPathology('afib')">Atrial Fibrillation (Missing P-Wave)</button>
+                    <button class="path-btn" onclick="setPathology('mi')">Myocardial Infarction (ST Elevation)</button>
+                </div>
+                <div id="pathology-desc" class="physics-box">
+                    <strong>Normal Mechanism:</strong> Sequential activation of SA Node $\rightarrow$ AV Node (delay mechanism) $\rightarrow$ Purkinje Fibers yields standard P-QRS-T geometry.
+                </div>
+            </div>
+        </aside>
+
+        <main class="visualization">
+            <div id="membrane-window" class="visual-card">
+                <h3>Transmembrane Microscopic Ion Action Visualization</h3>
+                <div class="membrane-biophysics">
+                    <div class="extracellular">Extracellular Space (+) <span id="ion-na" class="ion-bubble">Na+</span> <span id="ion-ca" class="ion-bubble">Ca2+</span></div>
+                    <div class="lipid-bilayer">CELL MEMBRANE (Voltage-Gated Channels)</div>
+                    <div class="intracellular">Intracellular Space (-) <span id="ion-k" class="ion-bubble">K+</span></div>
+                </div>
+            </div>
+
+            <div class="visual-card">
+                <h3>Real-Time Oscilloscope Trace Display</h3>
+                <div class="canvas-container">
+                    <span class="trace-tag tag-raw">Surface Input Signal (V₁ = Signal + Noise)</span>
+                    <canvas id="canvasTop" width="700" height="160"></canvas>
+                </div>
+                <div class="canvas-container">
+                    <span class="trace-tag tag-out" id="bottomTag">System Status: Resting Baseline</span>
+                    <canvas id="canvasBottom" width="700" height="160"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
