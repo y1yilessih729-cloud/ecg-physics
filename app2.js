@@ -9,33 +9,49 @@ const noiseSlider = document.getElementById('noiseSlider');
 const noiseVal = document.getElementById('noiseVal');
 const gainSlider = document.getElementById('gainSlider');
 const gainVal = document.getElementById('gainVal');
+const speedSlider = document.getElementById('speedSlider');
+const speedVal = document.getElementById('speedVal');
 const toggleOpAmp = document.getElementById('toggleOpAmp');
+const btnPause = document.getElementById('btnPause');
 const bottomTitle = document.getElementById('bottomTitle');
 const bottomDot = document.querySelector('.id-bottom-dot');
 const pathologyPanel = document.getElementById('pathology-panel');
 const pathText = document.getElementById('pathology-text');
 const pMagText = document.getElementById('p-mag');
 const pAngleText = document.getElementById('p-angle');
+const pProjText = document.getElementById('p-proj');
 
-// 仿真基础状态
+// 物理与控制状态
 let activeTab = 'micro';
 let isOpAmpActive = false;
 let pathologyType = 'normal';
+let isPaused = false;
 let time = 0;
+let timeSpeedFactor = 1.0; // 播放倍速控制
+
 let noiseAmplitude = 25;
 let circuitGain = 1.2;
 
-// 丝滑阻尼物理核心变量
+// 生理缓冲变量
 let targetMag = 0;
 let targetAngle = 0;
 let currentMag = 0;
 let currentAngle = 0;
 
-// 房颤行走参数
-let afibWalkTime = 0;
-
 noiseSlider.addEventListener('input', (e) => { noiseAmplitude = parseFloat(e.target.value); noiseVal.textContent = noiseAmplitude; });
 gainSlider.addEventListener('input', (e) => { circuitGain = parseFloat(e.target.value); gainVal.textContent = circuitGain; });
+speedSlider.addEventListener('input', (e) => { timeSpeedFactor = parseFloat(e.target.value); speedVal.textContent = timeSpeedFactor.toFixed(2); });
+
+function togglePause() {
+    isPaused = !isPaused;
+    if (isPaused) {
+        btnPause.textContent = "▶️ RESUME SIMULATION";
+        btnPause.style.background = "#1d4ed8";
+    } else {
+        btnPause.textContent = "⏸️ PAUSE SIMULATION";
+        btnPause.style.background = "#475569";
+    }
+}
 
 function switchMode(mode) {
     activeTab = mode;
@@ -62,7 +78,7 @@ function updateUIColors() {
         toggleOpAmp.textContent = "Op-Amp Subtraction: ACTIVE";
         toggleOpAmp.className = "btn btn-success";
         bottomTitle.textContent = "Op-Amp Output (V_out = Clean Clarified ECG)";
-        bottomDot.style.background = "#15803d"; // 舒适的深绿色点
+        bottomDot.style.background = "#15803d";
     } else {
         toggleOpAmp.textContent = "Turn On Differential Op-Amp";
         toggleOpAmp.className = "btn btn-danger";
@@ -77,151 +93,130 @@ function setPathology(type) {
     event.target.classList.add('active');
 }
 
-// 生理物理核心：计算偶极子状态
+// 物理核心解析解
 function getTargetDipoleState(t_val) {
     let period = (pathologyType === 'tachycardia') ? 0.45 : 1.0; 
     let phase = t_val % period;
-    let mag = 0;
-    let angle = 0;
-    let statusLabel = "";
+    let mag = 0, angle = 0, statusLabel = "";
 
     if (pathologyType === 'afib') {
-        afibWalkTime += 0.005;
-        mag = 6 + Math.sin(t_val * 15) * 2 + Math.cos(t_val * 35) * 1.5;
-        angle = t_val * 5 + Math.sin(t_val * 8) * 2;
-        statusLabel = "Atrial Fibrillation: Coherent single vector collapsed. Micro-dipoles creeping fluidly.";
+        mag = 7 + Math.sin(t_val * 12) * 2.5 + Math.cos(t_val * 28) * 1.5;
+        angle = t_val * 3.5 + Math.sin(t_val * 6) * 1.8;
+        statusLabel = "Atrial Fibrillation: Coherent macro-vector collapsed into tiny multi-centered waves.";
     } else {
         if (phase < 0.12) {
-            let pPhase = phase / 0.12;
-            mag = 12 * Math.sin(pPhase * Math.PI);
-            angle = Math.PI / 6; 
-            statusLabel = "P-Wave: SA Node firing. Atrial depolarization sweeping down-left smoothly.";
+            mag = 12 * Math.sin((phase / 0.12) * Math.PI); angle = Math.PI / 6; 
+            statusLabel = "P-Wave: Atrial depolarization vector sweeping downward.";
         } else if (phase >= 0.12 && phase < 0.18) {
             mag = 0; angle = 0;
-            statusLabel = "PR Segment: AV Node holding electrical directive. Syncing ventricle delay.";
+            statusLabel = "PR Segment: AV Node delay mechanism holds signal charge.";
         } else if (phase >= 0.18 && phase < 0.28) {
             let qrsPhase = (phase - 0.18) / 0.1;
-            if (qrsPhase < 0.2) {
-                let norm = qrsPhase / 0.2;
-                mag = 8 * Math.sin(norm * Math.PI); angle = -Math.PI * 0.7;
-            } else if (qrsPhase >= 0.2 && qrsPhase < 0.6) {
-                let norm = (qrsPhase - 0.2) / 0.4;
-                mag = 72 * Math.sin(norm * Math.PI); angle = Math.PI / 3; 
-            } else {
-                let norm = (qrsPhase - 0.6) / 0.4;
-                mag = 15 * Math.sin(norm * Math.PI); angle = -Math.PI * 0.4;
-            }
-            statusLabel = "QRS Complex: Mass depolarization wave cascading down the Purkinje fibers.";
+            if (qrsPhase < 0.2) { mag = 8; angle = -Math.PI * 0.7; } 
+            else if (qrsPhase >= 0.2 && qrsPhase < 0.6) { mag = 72; angle = Math.PI / 3; } // R波顶点
+            else { mag = 15; angle = -Math.PI * 0.4; }
+            statusLabel = "QRS Complex: Powerful ventricular depolarization electrical sweep.";
         } else if (phase >= 0.28 && phase < 0.42) {
-            if (pathologyType === 'mi') {
-                mag = 24; angle = Math.PI / 4;
-                statusLabel = "ST Elevation: Localized tissue necrosis setting up continuous injury potential field.";
-            } else {
-                mag = 0; angle = 0;
-                statusLabel = "ST Segment: Ventricles totally depolarized. Uniform electrical balance.";
-            }
+            if (pathologyType === 'mi') { mag = 24; angle = Math.PI / 4; statusLabel = "ST Elevation: Localized tissue death emitting injury current."; }
+            else { mag = 0; angle = 0; statusLabel = "ST Segment: Isoelectric uniform electrical plateau."; }
         } else if (phase >= 0.42 && phase < 0.65) {
-            let tNorm = (phase - 0.42) / 0.23;
-            mag = 18 * Math.sin(tNorm * Math.PI);
-            angle = Math.PI / 4; 
-            statusLabel = "T-Wave: Dynamic ventricular repolarization spreading across membrane surfaces.";
+            mag = 18 * Math.sin(((phase - 0.42) / 0.23) * Math.PI); angle = Math.PI / 4; 
+            statusLabel = "T-Wave: Ventricular repolarization vector restoring ions gradient.";
         } else {
-            mag = 0; angle = 0;
-            statusLabel = "Isoelectric Baseline: Diastolic recharge phase.";
+            mag = 0; angle = 0; statusLabel = "Isoelectric Line: Heart at mechanical rest.";
         }
     }
     return { mag, angle, label: statusLabel };
 }
 
-// 绘制心脏矢量雷达图（彻底改为白色背景）
+// 渲染具有物理投影指示线的心脏空间
 function drawDipoleVectorSpace() {
     let w = canvasDipole.width;
     let h = canvasDipole.height;
+    ctxDipole.fillStyle = '#ffffff'; ctxDipole.fillRect(0, 0, w, h);
     
-    // 【关键修复】彻底删除原先的黑色清屏，改用纯白色清屏
-    ctxDipole.fillStyle = '#ffffff'; 
-    ctxDipole.fillRect(0, 0, w, h);
-    
-    // 浅灰色圆圈和坐标轴
-    ctxDipole.strokeStyle = '#e2e8f0'; 
-    ctxDipole.lineWidth = 1;
-    ctxDipole.beginPath(); ctxDipole.arc(w/2, h/2, 80, 0, 2*Math.PI); ctxDipole.stroke();
-    ctxDipole.beginPath(); ctxDipole.moveTo(w/2, 20); ctxDipole.lineTo(w/2, h-20); ctxDipole.stroke();
-    ctxDipole.beginPath(); ctxDipole.moveTo(20, h/2); ctxDipole.lineTo(w-20, h/2); ctxDipole.stroke();
+    let cx = w / 2;
+    let cy = h / 2;
 
-    // 丝滑缓动
-    currentMag = currentMag + (targetMag - currentMag) * 0.3;
-    currentAngle = currentAngle + (targetAngle - currentAngle) * 0.3;
+    // 1. 绘制标准的医学导联轴参考线
+    // 横向 Lead I (红轴)：左臂到右臂
+    ctxDipole.strokeStyle = 'rgba(185, 28, 28, 0.25)'; ctxDipole.lineWidth = 2;
+    ctxDipole.setLineDash([2, 4]);
+    ctxDipole.beginPath(); ctxDipole.moveTo(15, cy); ctxDipole.lineTo(w - 15, cy); ctxDipole.stroke();
+    ctxDipole.setLineDash([]);
+    ctxDipole.fillStyle = '#b91c1c'; ctxDipole.font = '10px sans-serif';
+    ctxDipole.fillText("Lead I Axis (RA → LA)", w - 105, cy - 6);
+
+    // 斜向 Lead II (绿轴，60度方向)
+    ctxDipole.strokeStyle = 'rgba(21, 128, 61, 0.2)'; ctxDipole.lineWidth = 1.5;
+    ctxDipole.beginPath();
+    ctxDipole.moveTo(cx - 100 * Math.cos(Math.PI/3), cy - 100 * Math.sin(Math.PI/3));
+    ctxDipole.lineTo(cx + 100 * Math.cos(Math.PI/3), cy + 100 * Math.sin(Math.PI/3));
+    ctxDipole.stroke();
+
+    // 2. 一阶惯性延迟渲染心脏电轴
+    if (!isPaused) {
+        currentMag = currentMag + (targetMag - currentMag) * 0.3;
+        currentAngle = currentAngle + (targetAngle - currentAngle) * 0.3;
+    }
 
     let px = currentMag * Math.cos(currentAngle);
     let py = currentMag * Math.sin(currentAngle);
 
-    // 优雅的深蓝色大箭头
-    ctxDipole.strokeStyle = '#1d4ed8'; 
-    ctxDipole.lineWidth = 3.5;
+    // 3. 【核心物理可视化】：画出蓝色矢量箭头投射到 Lead I 横轴上的投影虚线
+    let projX = cx + px * 1.1; // 1.1是画布放大系数
+    let arrowY = cy + py * 1.1;
+
+    ctxDipole.strokeStyle = '#64748b'; ctxDipole.lineWidth = 1;
+    ctxDipole.setLineDash([3, 3]);
     ctxDipole.beginPath();
-    ctxDipole.moveTo(w/2, h/2);
-    
-    let targetX = w/2 + px * 1.1; 
-    let targetY = h/2 + py * 1.1; 
-    ctxDipole.lineTo(targetX, targetY);
+    ctxDipole.moveTo(projX, arrowY); // 从大箭头顶点开始
+    ctxDipole.lineTo(projX, cy);     // 垂直投射到横向 Lead I 轴上
     ctxDipole.stroke();
+    ctxDipole.setLineDash([]);
 
+    // 在横轴上画一个绿色亮眼的点，代表实时测到的电压数值
+    ctxDipole.fillStyle = '#15803d';
+    ctxDipole.beginPath(); ctxDipole.arc(projX, cy, 4, 0, 2*Math.PI); ctxDipole.fill();
+
+    // 4. 最终画出代表心脏电场的深蓝色主要电偶极子矢量
+    ctxDipole.strokeStyle = '#1d4ed8'; ctxDipole.lineWidth = 4;
+    ctxDipole.beginPath(); ctxDipole.moveTo(cx, cy); ctxDipole.lineTo(projX, arrowY); ctxDipole.stroke();
+    // 箭头帽
     ctxDipole.fillStyle = '#1d4ed8';
-    ctxDipole.beginPath(); ctxDipole.arc(targetX, targetY, 5, 0, 2*Math.PI); ctxDipole.fill();
-}
-
-// 绘制粉色标准心电图纸网格（彻底改为白色底+粉红格子）
-//  这是修复后绝对横平竖直的标准医用网格代码
-function drawMedicalGrid(ctx, w, h) {
-    // 强制把画布底色刷成纯白
-    ctx.fillStyle = '#ffffff'; 
-    ctx.fillRect(0, 0, w, h);
+    ctxDipole.beginPath(); ctxDipole.arc(projX, arrowY, 5.5, 0, 2*Math.PI); ctxDipole.fill();
     
-    // 1. 绘制大格（浅粉色线条，每 25 像素一个大格）
-    ctx.strokeStyle = '#ffcccc'; 
-    ctx.lineWidth = 1.0;
-    // 画垂直竖线：从 (x, 0) 直直画到 (x, h)
-    for (let x = 0; x < w; x += 25) { 
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); 
-    }
-    // 画水平横线：从 (0, y) 直直画到 (w, y) ———— 修复点就在这里！
-    for (let y = 0; y < h; y += 25) { 
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); 
-    }
-
-    // 2. 绘制细小格（极淡粉色线条，每 5 像素一个小格）
-    ctx.strokeStyle = '#fff5f5'; 
-    ctx.lineWidth = 0.5;
-    // 细竖线
-    for (let x = 0; x < w; x += 5) { 
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); 
-    }
-    // 细横线 ———— 修复点就在这里！
-    for (let y = 0; y < h; y += 5) { 
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); 
-    }
+    // 更新左边栏显示的数据，px即为横轴物理投影长度
+    pProjText.textContent = `${(px).toFixed(2)} mV`;
 }
 
-// 仿真主渲染循环
+function drawMedicalGrid(ctx, w, h) {
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = '#ffcccc'; ctx.lineWidth = 1.0;
+    for (let x = 0; x < w; x += 25) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 25) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    ctx.strokeStyle = '#fff5f5'; ctx.lineWidth = 0.5;
+    for (let x = 0; x < w; x += 5) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 5) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+}
+
 function loop() {
     const w = canvasTop.width;
     const h = canvasTop.height;
 
+    // 获取当前时刻偶极子物理参数
     let state = getTargetDipoleState(time);
     targetMag = state.mag;
     targetAngle = state.angle;
+    
     pathText.textContent = state.label;
     pMagText.textContent = `${currentMag.toFixed(2)} mV`;
     pAngleText.textContent = `${Math.round(currentAngle * (180 / Math.PI))}°`;
 
     drawDipoleVectorSpace();
-
-    // 重新用白色和粉红线条画示波器底图
     drawMedicalGrid(ctxTop, w, h);
     drawMedicalGrid(ctxBottom, w, h);
 
-    // 【颜色加深加粗】顶层用医用深红，底层用医用深绿，确保投影仪完美可见
     ctxTop.beginPath(); ctxTop.strokeStyle = '#dc2626'; ctxTop.lineWidth = 2.5;
     ctxBottom.beginPath(); ctxBottom.strokeStyle = isOpAmpActive ? '#15803d' : '#94a3b8'; ctxBottom.lineWidth = 2.5;
 
@@ -234,11 +229,9 @@ function loop() {
         let px = internalState.mag * Math.cos(internalState.angle);
         let v_noise = noiseControl * Math.sin(2 * Math.PI * 50 * t_offset);
 
-        // 顶层波形物理投影
         let v1 = px + v_noise;
         ctxTop.lineTo(x, h / 2 - v1);
 
-        // 底层差消消噪输出
         if (isOpAmpActive) {
             let v2 = -px + v_noise; 
             let v_out = (v2 - v1) * -0.5 * circuitGain; 
@@ -250,7 +243,10 @@ function loop() {
     ctxTop.stroke();
     ctxBottom.stroke();
 
-    time += 0.0035; 
+    // 如果没有按下暂停，时间才往前走（乘以速度滑块倍率系数）
+    if (!isPaused) {
+        time += 0.0035 * timeSpeedFactor;
+    }
     requestAnimationFrame(loop);
 }
 
