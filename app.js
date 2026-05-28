@@ -172,22 +172,35 @@ function drawDipoleVectorSpace() {
 }
 
 // 绘制粉色标准心电图纸网格（彻底改为白色底+粉红格子）
+//  这是修复后绝对横平竖直的标准医用网格代码
 function drawMedicalGrid(ctx, w, h) {
-    // 【关键修复】强制把画布底色刷成纯白
+    // 强制把画布底色刷成纯白
     ctx.fillStyle = '#ffffff'; 
     ctx.fillRect(0, 0, w, h);
     
-    // 1. 绘制大格（浅粉色线条）
+    // 1. 绘制大格（浅粉色线条，每 25 像素一个大格）
     ctx.strokeStyle = '#ffcccc'; 
     ctx.lineWidth = 1.0;
-    for (let x = 0; x < w; x += 25) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-    for (let y = 0; y < h; y += 25) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, h); ctx.stroke(); }
+    // 画垂直竖线：从 (x, 0) 直直画到 (x, h)
+    for (let x = 0; x < w; x += 25) { 
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); 
+    }
+    // 画水平横线：从 (0, y) 直直画到 (w, y) ———— 修复点就在这里！
+    for (let y = 0; y < h; y += 25) { 
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); 
+    }
 
-    // 2. 绘制细小格（极淡粉色线条）
-    ctx.strokeStyle = '#fff0f0'; 
+    // 2. 绘制细小格（极淡粉色线条，每 5 像素一个小格）
+    ctx.strokeStyle = '#fff5f5'; 
     ctx.lineWidth = 0.5;
-    for (let x = 0; x < w; x += 5) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-    for (let y = 0; y < h; y += 5) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, h); ctx.stroke(); }
+    // 细竖线
+    for (let x = 0; x < w; x += 5) { 
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); 
+    }
+    // 细横线 ———— 修复点就在这里！
+    for (let y = 0; y < h; y += 5) { 
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); 
+    }
 }
 
 // 仿真主渲染循环
