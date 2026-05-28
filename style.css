@@ -1,36 +1,35 @@
 :root {
-    --bg-darkest: #05070a;
-    --bg-panel: #0d121a;
-    --bg-card: #131a26;
-    --border-glow: #1f2b3e;
-    --text-bright: #ffffff;
-    --text-dim: #8495a8;
+    --bg-lightest: #f8fafc;
+    --bg-panel: #ffffff;
+    --bg-card: #f1f5f9;
+    --border-line: #cbd5e1;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
     
-    /* 极致加亮、绝不模糊的荧光配色 */
-    --neon-red: #ff2a2a;
-    --neon-green: #00ff66;
-    --neon-blue: #00d9ff;
-    --neon-yellow: #ffdf00;
+    /* 纸质医学示波器高对比度配色 */
+    --deep-red: #dc2626;
+    --deep-green: #15803d;
+    --deep-blue: #1d4ed8;
+    --grid-pink: #ffe4e4;
 }
 
 body {
-    background-color: var(--bg-darkest);
-    color: var(--text-bright);
+    background-color: var(--bg-lightest);
+    color: var(--text-dark);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 20px;
-    overflow-x: hidden;
 }
 
 header {
     text-align: center;
-    border-bottom: 2px solid var(--border-glow);
+    border-bottom: 2px solid var(--border-line);
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
-header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
-.subtitle { color: var(--text-dim); margin: 6px 0 0; font-size: 13px; }
+header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; color: var(--text-dark); }
+.subtitle { color: var(--text-muted); margin: 6px 0 0; font-size: 13px; }
 
 .main-container {
     display: flex;
@@ -39,7 +38,6 @@ header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
     gap: 20px;
 }
 
-/* 左侧 Caption 完美格式化排版 */
 .sidebar {
     flex: 1 0 320px;
     display: flex;
@@ -51,24 +49,25 @@ header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--text-dim);
+    color: var(--text-muted);
     margin: 0 0 8px 0;
-    border-left: 3px solid var(--neon-blue);
+    border-left: 3px solid var(--deep-blue);
     padding-left: 8px;
 }
 
 .nav-section, .parameter-section, .pathology-section {
     background: var(--bg-panel);
-    border: 1px solid var(--border-glow);
+    border: 1px solid var(--border-line);
     border-radius: 10px;
     padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .nav-tabs { display: flex; flex-direction: column; gap: 8px; }
 .nav-btn {
-    background: #17202e;
-    border: 1px solid var(--border-glow);
-    color: var(--text-dim);
+    background: #f8fafc;
+    border: 1px solid var(--border-line);
+    color: var(--text-dark);
     padding: 10px 12px;
     border-radius: 6px;
     text-align: left;
@@ -77,7 +76,7 @@ header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
     font-size: 13px;
     transition: all 0.2s;
 }
-.nav-btn.active { background: var(--neon-blue); color: #000; border-color: var(--neon-blue); }
+.nav-btn.active { background: var(--deep-blue); color: white; border-color: var(--deep-blue); }
 
 .control-card {
     background: var(--bg-card);
@@ -85,11 +84,10 @@ header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
     padding: 12px;
     margin-bottom: 10px;
 }
-.control-card:last-child { margin-bottom: 0; }
-.param-title { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+.param-title { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
 
 .slider-wrapper { display: flex; align-items: center; gap: 12px; }
-input[type="range"] { flex: 1; accent-color: var(--neon-blue); cursor: pointer; }
+input[type="range"] { flex: 1; accent-color: var(--deep-blue); cursor: pointer; }
 
 .value-badge {
     font-family: monospace;
@@ -100,39 +98,37 @@ input[type="range"] { flex: 1; accent-color: var(--neon-blue); cursor: pointer; 
     min-width: 50px;
     text-align: center;
 }
-.badge-red { background: rgba(255,42,42,0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
-.badge-blue { background: rgba(0,217,217,0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+.badge-red { background: #fee2e2; color: var(--deep-red); border: 1px solid #fca5a5; }
+.badge-blue { background: #dbeafe; color: var(--deep-blue); border: 1px solid #bfdbfe; }
 
 .btn {
-    width: 100%; padding: 12px; border-radius: 6px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+    width: 100%; padding: 12px; border-radius: 6px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; color: white;
 }
-.btn-danger { background: var(--neon-red); color: white; }
-.btn-success { background: var(--neon-green); color: black; }
+.btn-danger { background: var(--deep-red); }
+.btn-success { background: var(--deep-green); }
 
 .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .path-btn {
-    background: #17202e; border: 1px solid var(--border-glow); color: var(--text-bright); padding: 8px; font-size: 12px; border-radius: 4px; cursor: pointer; text-align: center;
+    background: #f8fafc; border: 1px solid var(--border-line); color: var(--text-dark); padding: 8px; font-size: 12px; border-radius: 4px; cursor: pointer; text-align: center;
 }
-.path-btn.active { background: var(--neon-green); color: black; font-weight: bold; border-color: var(--neon-green); }
+.path-btn.active { background: var(--deep-green); color: white; font-weight: bold; border-color: var(--deep-green); }
 
-/* 右侧核心可视化窗口样式 */
 .visualization { flex: 2; display: flex; flex-direction: column; gap: 20px; }
-.visual-card { background: var(--bg-panel); border: 1px solid var(--border-glow); border-radius: 12px; padding: 15px; }
-.visual-card h2 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.visual-card { background: var(--bg-panel); border: 1px solid var(--border-line); border-radius: 12px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.visual-card h2 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
 .dipole-workspace { display: flex; gap: 20px; align-items: center; background: var(--bg-card); padding: 10px; border-radius: 8px; }
-#canvasDipole { background: #04060a; border-radius: 6px; border: 1px solid var(--border-glow); }
+#canvasDipole { background: #ffffff; border-radius: 6px; border: 1px solid var(--border-line); }
 
 .physics-live-data { flex: 1; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
-.data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1c2738; padding-bottom: 5px; }
-.status-box { background: #070b12; border-left: 3px solid var(--neon-blue); padding: 10px; font-size: 12px; color: var(--text-dim); border-radius: 4px; line-height: 1.5; }
+.data-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-line); padding-bottom: 5px; }
+.status-box { background: #ffffff; border-left: 3px solid var(--deep-blue); padding: 10px; font-size: 12px; color: var(--text-muted); border-radius: 4px; line-height: 1.5; border-top: 1px solid var(--border-line); border-right: 1px solid var(--border-line); border-bottom: 1px solid var(--border-line); }
 
 .canvas-container { margin-bottom: 15px; background: var(--bg-card); padding: 12px; border-radius: 8px; }
 .canvas-container:last-child { margin-bottom: 0; }
 .trace-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.trace-header h3 { margin: 0; font-size: 13px; color: var(--text-dim); }
+.trace-header h3 { margin: 0; font-size: 13px; color: var(--text-muted); }
 .color-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.dot-red { background: var(--neon-red); box-shadow: 0 0 6px var(--neon-red); }
+.dot-red { background: var(--deep-red); box-shadow: 0 0 4px rgba(220,38,38,0.3); }
 
-/* 极其清晰的示波器画布，加深网格颜色，确保曲线突出 */
-canvas { background: #020305; display: block; border-radius: 4px; border: 1px solid #141b26; width: 100%; }
+canvas { background: #ffffff; display: block; border-radius: 4px; border: 1px solid var(--border-line); width: 100%; }
