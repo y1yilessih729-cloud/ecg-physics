@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bioelectromagnetism: Cardiac Dipole & Op-Amp Simulator</title>
+    <title>Bioelectromagnetism: Smooth Cardiac Dipole Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <h1>Cardiac Electric Dipole Vector & Hardware Subtraction Simulator</h1>
-        <p class="subtitle">AP Physics & Biomedical Engineering Live Dashboard</p>
+        <p class="subtitle">AP Physics & Biomedical Engineering Live Dashboard (Light Mode)</p>
     </header>
 
     <div class="main-container">
@@ -64,9 +64,9 @@
                 <div class="dipole-workspace">
                     <canvas id="canvasDipole" width="300" height="240"></canvas>
                     <div class="physics-live-data">
-                        <div class="data-row"><span>Dipole Magnitude |\vec{p}|:</span> <strong id="p-mag" style="color:var(--neon-green)">0.00 mV</strong></div>
-                        <div class="data-row"><span>Projection Angle &theta;:</span> <strong id="p-angle" style="color:var(--neon-blue)">0°</strong></div>
-                        <div id="pathology-text" class="status-box">Status: Depolarizing myocardium sequentially.</div>
+                        <div class="data-row"><span>Dipole Magnitude |\vec{p}|:</span> <strong id="p-mag" style="color:var(--deep-red)">0.00 mV</strong></div>
+                        <div class="data-row"><span>Projection Angle &theta;:</span> <strong id="p-angle" style="color:var(--deep-blue)">0°</strong></div>
+                        <div id="pathology-text" class="status-box">Status: Ready. Synchronizing ventricular vector sweep.</div>
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 
                 <div class="canvas-container">
                     <div class="trace-header">
-                        <span class="color-dot id-bottom-dot" style="background:#55657e"></span>
+                        <span class="color-dot id-bottom-dot" style="background:#94a3b8"></span>
                         <h3 id="bottomTitle">Processed Target Signal Baseline</h3>
                     </div>
                     <canvas id="canvasBottom" width="750" height="150"></canvas>
