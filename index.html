@@ -3,90 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bioelectromagnetism: ECG Interactive Presentation Demo</title>
+    <title>Bioelectromagnetism: Cardiac Dipole & Op-Amp Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>How Electromagnetic Fields Reveal the Electrical Activity of the Human Heart</h1>
-        <p class="subtitle">AP Physics & Biomedical Engineering Interactive Courseware</p>
+        <h1>Cardiac Electric Dipole Vector & Hardware Subtraction Simulator</h1>
+        <p class="subtitle">AP Physics & Biomedical Engineering Live Dashboard</p>
     </header>
 
     <div class="main-container">
         <aside class="sidebar">
-            <h2>PPT Navigation & Controls</h2>
-            
-            <div class="nav-tabs">
-                <button class="nav-btn active" onclick="switchTab('tab-micro')">Pages 3-5: Microscopic Source</button>
-                <button class="nav-btn" onclick="switchTab('tab-circuit')">Pages 10-11: Engineering Capture</button>
-                <button class="nav-btn" onclick="switchTab('tab-clinical')">Pages 12-16: Clinical Application</button>
-            </div>
+            <section class="nav-section">
+                <h2>Presentation Navigation</h2>
+                <div class="nav-tabs">
+                    <button class="nav-btn active" id="btn-micro" onclick="switchMode('micro')">Pages 3-5: Microscopic & Dipole Vector</button>
+                    <button class="nav-btn" id="btn-circuit" onclick="switchMode('circuit')">Pages 10-11: Circuit Noise Elimination</button>
+                    <button class="nav-btn" id="btn-clinical" onclick="switchMode('clinical')">Pages 12-16: Clinical Diagnostic Geometry</button>
+                </div>
+            </section>
 
-            <div id="tab-micro" class="tab-content active">
-                <h3>Microscopic Membrane Potential</h3>
-                <p class="info-text">Simulating ionic flux ($\text{Na}^+, \text{Ca}^{2+}, \text{K}^+$) generating transmembrane potential differentials.</p>
-                <div class="control-group">
-                    <button class="action-btn" onclick="triggerDepolarization()">Trigger Action Potential (Depolarization)</button>
+            <section class="parameter-section">
+                <h2>Simulation Parameters</h2>
+                
+                <div class="control-card">
+                    <label class="param-title">50Hz Powerline Interference ($V_{cm}$)</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="noiseSlider" min="0" max="60" value="25">
+                        <span class="value-badge badge-red"><span id="noiseVal">25</span> mV</span>
+                    </div>
                 </div>
-                <div class="physics-box">
-                    <strong>Physics Core:</strong>
-                    The heart functions macroscopically as a rotating electric dipole vector $\vec{p} = q \cdot \vec{d}$ projecting dynamic potential fields onto the volume conductor of human tissue.
-                </div>
-            </div>
 
-            <div id="tab-circuit" class="tab-content">
-                <h3>Hardware Differential Subtraction</h3>
-                <p class="info-text">Combating ambient 50Hz AC powerline noise using an operational amplifier configuration.</p>
-                <div class="control-group">
-                    <label>Ambient Noise Amplitude ($V_{cm}$): <span id="noiseVal">25</span> mV</label>
-                    <input type="range" id="noiseSlider" min="0" max="60" value="25">
+                <div class="control-card">
+                    <label class="param-title">Op-Amp Hardware Gain ($R_2/R_1$)</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="gainSlider" min="0.5" max="2.5" step="0.1" value="1.2">
+                        <span class="value-badge badge-blue"><span id="gainVal">1.2</span>x</span>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <label>Op-Amp Feedback Gain ($R_2/R_1$): <span id="gainVal">1.2</span>x</label>
-                    <input type="range" id="gainSlider" min="0.5" max="2.5" step="0.1" value="1.2">
-                </div>
-                <button id="toggleOpAmp" class="circuit-toggle btn-red" onclick="toggleFilter()">Turn On Differential Op-Amp</button>
-                <div class="physics-box">
-                    <strong>Mathematical Model:</strong>
-                    $$V_{out} = \frac{R_2}{R_1}(V_2 - V_1)$$
-                    When common-mode noise is mathematically identical on both inputs, subtraction forces it to $0\text{V}$.
-                </div>
-            </div>
 
-            <div id="tab-clinical" class="tab-content">
-                <h3>Clinical Electrocardiology</h3>
-                <p class="info-text">Select a clinical pathology to modify the electro-anatomical boundary conditions and observe geometric deformations.</p>
-                <div class="pathology-selector">
-                    <button class="path-btn active" onclick="setPathology('normal')">Normal Rhythm (60-100 bpm)</button>
-                    <button class="path-btn" onclick="setPathology('tachycardia')">Tachycardia (Short R-R Spacing)</button>
-                    <button class="path-btn" onclick="setPathology('afib')">Atrial Fibrillation (Missing P-Wave)</button>
-                    <button class="path-btn" onclick="setPathology('mi')">Myocardial Infarction (ST Elevation)</button>
+                <div class="control-card button-card">
+                    <button id="toggleOpAmp" class="btn btn-danger" onclick="toggleFilter()">Op-Amp Subtraction: OFF</button>
                 </div>
-                <div id="pathology-desc" class="physics-box">
-                    <strong>Normal Mechanism:</strong> Sequential activation of SA Node $\rightarrow$ AV Node (delay mechanism) $\rightarrow$ Purkinje Fibers yields standard P-QRS-T geometry.
+            </section>
+
+            <section class="pathology-section" id="pathology-panel" style="display: none;">
+                <h2>Anatomical Electropathology</h2>
+                <div class="path-grid">
+                    <button class="path-btn active" onclick="setPathology('normal')">Normal Rhythm</button>
+                    <button class="path-btn" onclick="setPathology('tachycardia')">Tachycardia</button>
+                    <button class="path-btn" onclick="setPathology('afib')">Atrial Fibrillation</button>
+                    <button class="path-btn" onclick="setPathology('mi')">Myocardial Infarction</button>
                 </div>
-            </div>
+            </section>
         </aside>
 
         <main class="visualization">
-            <div id="membrane-window" class="visual-card">
-                <h3>Transmembrane Microscopic Ion Action Visualization</h3>
-                <div class="membrane-biophysics">
-                    <div class="extracellular">Extracellular Space (+) <span id="ion-na" class="ion-bubble">Na+</span> <span id="ion-ca" class="ion-bubble">Ca2+</span></div>
-                    <div class="lipid-bilayer">CELL MEMBRANE (Voltage-Gated Channels)</div>
-                    <div class="intracellular">Intracellular Space (-) <span id="ion-k" class="ion-bubble">K+</span></div>
+            <div class="visual-card visual-card-half">
+                <h2>Cardiac Electric Dipole Vector Space ($\vec{p} = q \cdot \vec{d}$)</h2>
+                <div class="dipole-workspace">
+                    <canvas id="canvasDipole" width="300" height="240"></canvas>
+                    <div class="physics-live-data">
+                        <div class="data-row"><span>Dipole Magnitude |\vec{p}|:</span> <strong id="p-mag" style="color:var(--neon-green)">0.00 mV</strong></div>
+                        <div class="data-row"><span>Projection Angle &theta;:</span> <strong id="p-angle" style="color:var(--neon-blue)">0°</strong></div>
+                        <div id="pathology-text" class="status-box">Status: Depolarizing myocardium sequentially.</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="visual-card">
-                <h3>Real-Time Oscilloscope Trace Display</h3>
+            <div class="visual-card visual-card-full">
+                <h2>Real-Time Oscilloscope Trace Display</h2>
                 <div class="canvas-container">
-                    <span class="trace-tag tag-raw">Surface Input Signal (V₁ = Signal + Noise)</span>
-                    <canvas id="canvasTop" width="700" height="160"></canvas>
+                    <div class="trace-header">
+                        <span class="color-dot dot-red"></span>
+                        <h3>Input Lead I ($V_1 = \vec{p} \cdot \vec{d} + V_{noise}$)</h3>
+                    </div>
+                    <canvas id="canvasTop" width="750" height="150"></canvas>
                 </div>
+                
                 <div class="canvas-container">
-                    <span class="trace-tag tag-out" id="bottomTag">System Status: Resting Baseline</span>
-                    <canvas id="canvasBottom" width="700" height="160"></canvas>
+                    <div class="trace-header">
+                        <span class="color-dot id-bottom-dot" style="background:#55657e"></span>
+                        <h3 id="bottomTitle">Processed Target Signal Baseline</h3>
+                    </div>
+                    <canvas id="canvasBottom" width="750" height="150"></canvas>
                 </div>
             </div>
         </main>
