@@ -1,144 +1,138 @@
 :root {
-    --bg-main: #0a0d14;
-    --bg-card: #141a24;
-    --border-color: #263347;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --neon-green: #00e676;
-    --neon-red: #ff3d00;
-    --neon-blue: #00b0ff;
+    --bg-darkest: #05070a;
+    --bg-panel: #0d121a;
+    --bg-card: #131a26;
+    --border-glow: #1f2b3e;
+    --text-bright: #ffffff;
+    --text-dim: #8495a8;
+    
+    /* 极致加亮、绝不模糊的荧光配色 */
+    --neon-red: #ff2a2a;
+    --neon-green: #00ff66;
+    --neon-blue: #00d9ff;
+    --neon-yellow: #ffdf00;
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-darkest);
+    color: var(--text-bright);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 header {
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-glow);
     padding-bottom: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
-h1 { margin: 0; font-size: 24px; letter-spacing: 0.5px; }
-.subtitle { margin: 5px 0 0; color: var(--text-secondary); font-size: 14px; }
+header h1 { font-size: 24px; margin: 0; letter-spacing: 0.5px; }
+.subtitle { color: var(--text-dim); margin: 6px 0 0; font-size: 13px; }
 
 .main-container {
     display: flex;
-    max-width: 1200px;
+    max-width: 1250px;
     margin: 0 auto;
-    gap: 25px;
+    gap: 20px;
 }
 
+/* 左侧 Caption 完美格式化排版 */
 .sidebar {
-    flex: 1;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
+    flex: 1 0 320px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.sidebar h2 { margin-top: 0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
-
-.nav-tabs {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.sidebar h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin: 0 0 8px 0;
+    border-left: 3px solid var(--neon-blue);
+    padding-left: 8px;
 }
 
+.nav-section, .parameter-section, .pathology-section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-glow);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.nav-tabs { display: flex; flex-direction: column; gap: 8px; }
 .nav-btn {
-    background: #1e293b;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 10px;
-    text-align: left;
+    background: #17202e;
+    border: 1px solid var(--border-glow);
+    color: var(--text-dim);
+    padding: 10px 12px;
     border-radius: 6px;
+    text-align: left;
     cursor: pointer;
     font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s;
 }
+.nav-btn.active { background: var(--neon-blue); color: #000; border-color: var(--neon-blue); }
 
-.nav-btn.active {
-    background: var(--neon-blue);
-    color: #000;
-    border-color: var(--neon-blue);
-}
-
-.tab-content { display: none; flex-direction: column; gap: 15px; }
-.tab-content.active { display: flex; }
-
-.info-text { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
-
-.control-group { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
-
-input[type="range"] { width: 100%; accent-color: var(--neon-blue); }
-
-.physics-box {
-    background: #0f172a;
-    border-left: 3px solid var(--neon-blue);
-    padding: 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
-.action-btn {
-    background: var(--neon-blue);
-    color: #000;
-    font-weight: bold;
-    border: none;
-    padding: 10px;
+.control-card {
+    background: var(--bg-card);
     border-radius: 6px;
-    cursor: pointer;
+    padding: 12px;
+    margin-bottom: 10px;
 }
+.control-card:last-child { margin-bottom: 0; }
+.param-title { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
 
-.btn-red { background: var(--neon-red); color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 6px; cursor: pointer; }
-.btn-green { background: var(--neon-green); color: #000; font-weight: bold; border: none; padding: 12px; border-radius: 6px; cursor: pointer; }
+.slider-wrapper { display: flex; align-items: center; gap: 12px; }
+input[type="range"] { flex: 1; accent-color: var(--neon-blue); cursor: pointer; }
 
-.pathology-selector { display: flex; flex-direction: column; gap: 6px; }
-.path-btn {
-    background: #1e293b;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 8px;
+.value-badge {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
     border-radius: 4px;
-    text-align: left;
-    cursor: pointer;
-    font-size: 12px;
+    min-width: 50px;
+    text-align: center;
 }
-.path-btn.active { border-left: 4px solid var(--neon-green); background: #273549; }
+.badge-red { background: rgba(255,42,42,0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
+.badge-blue { background: rgba(0,217,217,0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
 
+.btn {
+    width: 100%; padding: 12px; border-radius: 6px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+}
+.btn-danger { background: var(--neon-red); color: white; }
+.btn-success { background: var(--neon-green); color: black; }
+
+.path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.path-btn {
+    background: #17202e; border: 1px solid var(--border-glow); color: var(--text-bright); padding: 8px; font-size: 12px; border-radius: 4px; cursor: pointer; text-align: center;
+}
+.path-btn.active { background: var(--neon-green); color: black; font-weight: bold; border-color: var(--neon-green); }
+
+/* 右侧核心可视化窗口样式 */
 .visualization { flex: 2; display: flex; flex-direction: column; gap: 20px; }
-.visual-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
-.visual-card h3 { margin: 0 0 15px 0; font-size: 14px; color: var(--text-secondary); text-transform: uppercase; }
+.visual-card { background: var(--bg-panel); border: 1px solid var(--border-glow); border-radius: 12px; padding: 15px; }
+.visual-card h2 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
 
-.canvas-container { position: relative; margin-bottom: 15px; }
+.dipole-workspace { display: flex; gap: 20px; align-items: center; background: var(--bg-card); padding: 10px; border-radius: 8px; }
+#canvasDipole { background: #04060a; border-radius: 6px; border: 1px solid var(--border-glow); }
+
+.physics-live-data { flex: 1; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+.data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1c2738; padding-bottom: 5px; }
+.status-box { background: #070b12; border-left: 3px solid var(--neon-blue); padding: 10px; font-size: 12px; color: var(--text-dim); border-radius: 4px; line-height: 1.5; }
+
+.canvas-container { margin-bottom: 15px; background: var(--bg-card); padding: 12px; border-radius: 8px; }
 .canvas-container:last-child { margin-bottom: 0; }
-canvas { background: #070a0f; display: block; border-radius: 8px; border: 1px solid #1e293b; width: 100%; }
+.trace-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.trace-header h3 { margin: 0; font-size: 13px; color: var(--text-dim); }
+.color-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-red { background: var(--neon-red); box-shadow: 0 0 6px var(--neon-red); }
 
-.trace-tag { position: absolute; top: 10px; left: 15px; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.7); }
-.tag-raw { color: var(--neon-red); }
-.tag-out { color: var(--text-secondary); }
-
-/* 微观离子动画窗口样式 */
-.membrane-biophysics {
-    height: 100px;
-    background: #090d14;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px;
-    font-size: 12px;
-}
-.lipid-bilayer { background: #334155; text-align: center; color: #94a3b8; font-weight: bold; padding: 4px 0; letter-spacing: 2px; }
-.ion-bubble { display: inline-block; padding: 2px 6px; background: var(--neon-blue); color: #000; font-weight: bold; border-radius: 10px; margin-left: 10px; transition: all 0.5s ease; }
-#ion-na { background: #ffbc00; }
-#ion-ca { background: #e040fb; }
+/* 极其清晰的示波器画布，加深网格颜色，确保曲线突出 */
+canvas { background: #020305; display: block; border-radius: 4px; border: 1px solid #141b26; width: 100%; }
